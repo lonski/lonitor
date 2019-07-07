@@ -1,4 +1,4 @@
-package pl.lonski.lonitor
+package pl.lonski.lonitor.world
 
 class WorldBuilder(private val width: Int, private val height: Int) {
 

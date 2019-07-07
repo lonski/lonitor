@@ -1,4 +1,4 @@
-package pl.lonski.lonitor
+package pl.lonski.lonitor.screen
 
 import org.hexworks.zircon.api.CharacterTileStrings
 import org.hexworks.zircon.api.color.ANSITileColor

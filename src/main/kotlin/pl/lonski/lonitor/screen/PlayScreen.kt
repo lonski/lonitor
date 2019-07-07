@@ -1,11 +1,12 @@
-package pl.lonski.lonitor
+package pl.lonski.lonitor.screen
 
 import org.hexworks.zircon.api.Positions
 import org.hexworks.zircon.api.Tiles
-import org.hexworks.zircon.api.color.ANSITileColor
 import org.hexworks.zircon.api.grid.TileGrid
 import org.hexworks.zircon.api.uievent.KeyCode.*
 import org.hexworks.zircon.api.uievent.KeyboardEvent
+import pl.lonski.lonitor.world.World
+import pl.lonski.lonitor.world.WorldBuilder
 import kotlin.math.max
 import kotlin.math.min
 
@@ -75,26 +76,6 @@ class PlayScreen : GameScreen {
         return WorldBuilder(80, 43)
             .usingTravellerGenerator()
             .build()
-    }
-}
-
-enum class Tile(val glyph: Char, val color: ANSITileColor) {
-
-    FLOOR('.', ANSITileColor.GRAY),
-    WALL('#', ANSITileColor.GRAY)
-}
-
-class World(var tiles: Array<Array<Tile>>) {
-
-    val width = tiles.size
-    val height = tiles[0].size
-
-    fun glyph(x: Int, y: Int): Char {
-        return tiles[x][y].glyph
-    }
-
-    fun color(x: Int, y: Int): ANSITileColor {
-        return tiles[x][y].color
     }
 }
 

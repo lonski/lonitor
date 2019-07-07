@@ -1,4 +1,4 @@
-package pl.lonski.lonitor
+package pl.lonski.lonitor.screen
 
 import org.hexworks.zircon.api.color.ANSITileColor.MAGENTA
 import org.hexworks.zircon.api.color.ANSITileColor.WHITE
@@ -6,6 +6,8 @@ import org.hexworks.zircon.api.data.Position
 import org.hexworks.zircon.api.grid.TileGrid
 import org.hexworks.zircon.api.uievent.KeyCode
 import org.hexworks.zircon.api.uievent.KeyboardEvent
+import pl.lonski.lonitor.screen.GameScreen
+import pl.lonski.lonitor.screen.PlayScreen
 
 class StartScreen : GameScreen {
 

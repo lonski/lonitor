@@ -1,5 +1,7 @@
-package pl.lonski.lonitor
+package pl.lonski.lonitor.world
 
+import pl.lonski.lonitor.Line
+import pl.lonski.lonitor.Point
 import kotlin.math.max
 
 class TravelerDungeonGenerator(private val width: Int, private val height: Int) {
@@ -89,5 +91,8 @@ class TravelerDungeonGenerator(private val width: Int, private val height: Int) 
         point.x > 0 && (point.x < width - 1) && point.y > 0 && (point.y < height - 1)
 
     private fun getRandomPoint() =
-        Point(max(2, (Math.random() * width - 2).toInt()), max(2, (Math.random() * height - 2).toInt()))
+        Point(
+            max(2, (Math.random() * width - 2).toInt()),
+            max(2, (Math.random() * height - 2).toInt())
+        )
 }

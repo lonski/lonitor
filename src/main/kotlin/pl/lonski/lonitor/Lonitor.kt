@@ -9,6 +9,8 @@ import org.hexworks.zircon.api.uievent.KeyboardEvent
 import org.hexworks.zircon.api.uievent.KeyboardEventProcessor
 import org.hexworks.zircon.api.uievent.KeyboardEventType.KEY_PRESSED
 import org.hexworks.zircon.api.uievent.UIEventPhase
+import pl.lonski.lonitor.screen.GameScreen
+import pl.lonski.lonitor.screen.StartScreen
 
 class Lonitor {
 
