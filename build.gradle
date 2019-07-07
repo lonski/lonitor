@@ -12,8 +12,8 @@ repositories {
 
 dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
-    implementation 'org.hexworks.zircon:zircon.core-jvm:2019.1.0-PREVIEW'
-    implementation 'org.hexworks.zircon:zircon.jvm.swing:2019.1.0-PREVIEW'
+    implementation 'org.hexworks.zircon:zircon.core-jvm:2019.1.2-PREVIEW'
+    implementation 'org.hexworks.zircon:zircon.jvm.swing:2019.1.2-PREVIEW'
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.5.0'
     testImplementation 'org.assertj:assertj-core:3.12.2'

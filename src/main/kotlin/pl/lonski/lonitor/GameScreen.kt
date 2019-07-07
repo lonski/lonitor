@@ -9,6 +9,7 @@ import org.hexworks.zircon.api.uievent.KeyboardEvent
 interface GameScreen {
 
     fun display(terminal: TileGrid)
+
     fun handleInput(event: KeyboardEvent): GameScreen?
 
     fun drawText(text: String, position: Position, color: ANSITileColor, terminal: TileGrid) {
