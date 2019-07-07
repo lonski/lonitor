@@ -13,4 +13,3 @@ class WorldBuilder(private val width: Int, private val height: Int) {
         return this
     }
 }
-
