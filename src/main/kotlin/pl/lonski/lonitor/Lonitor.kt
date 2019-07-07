@@ -1,12 +1,12 @@
 package pl.lonski.lonitor
 
-import org.hexworks.zircon.api.AppConfigs
-import org.hexworks.zircon.api.CP437TilesetResources
-import org.hexworks.zircon.api.Sizes
-import org.hexworks.zircon.api.SwingApplications
+import org.hexworks.zircon.api.*
 import org.hexworks.zircon.api.grid.TileGrid
-import org.hexworks.zircon.api.kotlin.onInput
-import org.hexworks.zircon.api.kotlin.whenKeyStroke
+import org.hexworks.zircon.api.uievent.KeyboardEvent
+import org.hexworks.zircon.api.uievent.KeyboardEventHandler
+import org.hexworks.zircon.api.uievent.KeyboardEventType.KEY_PRESSED
+import org.hexworks.zircon.api.uievent.UIEventPhase
+import org.hexworks.zircon.api.uievent.UIEventResponse
 
 class Lonitor {
 
@@ -15,22 +15,23 @@ class Lonitor {
     fun start() {
         val terminal = createTerminal()
         screen.display(terminal)
-        terminal.onInput { input ->
-            input.whenKeyStroke { ks ->
-                val newScreen: GameScreen? = screen.handleInput(ks)
+        terminal.onKeyboardEvent(KEY_PRESSED, object : KeyboardEventHandler {
+            override fun handle(event: KeyboardEvent, phase: UIEventPhase): UIEventResponse {
+                val newScreen: GameScreen? = screen.handleInput(event)
                 if (newScreen != null) {
-                    this.screen = newScreen
+                    screen = newScreen
                 }
                 screen.display(terminal)
+                return UIEventResponses.pass()
             }
-        }
+        })
     }
 
     private fun createTerminal(): TileGrid {
         return SwingApplications.startTileGrid(
             AppConfigs.newConfig()
-                .withSize(Sizes.create(80, 43))
                 .withDefaultTileset(CP437TilesetResources.mdCurses16x16())
+                .withSize(Sizes.create(80, 43))
                 .build()
         )
     }

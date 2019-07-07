@@ -4,22 +4,23 @@ import org.hexworks.zircon.api.Positions
 import org.hexworks.zircon.api.Tiles
 import org.hexworks.zircon.api.color.ANSITileColor
 import org.hexworks.zircon.api.grid.TileGrid
-import org.hexworks.zircon.api.input.InputType.*
-import org.hexworks.zircon.api.input.KeyStroke
-import pl.lonski.lonitor.Tile.FLOOR
-import pl.lonski.lonitor.Tile.WALL
+import org.hexworks.zircon.api.uievent.KeyCode.*
+import org.hexworks.zircon.api.uievent.KeyboardEvent
 import kotlin.math.max
 import kotlin.math.min
 
 class PlayScreen : GameScreen {
 
-    val world: World = createWorld()
-    val screenWidth: Int = 80
-    val screenHeight: Int = 43
+    private val screenWidth: Int = 80
+    private val screenHeight: Int = 43
+
     var centerX: Int = 0
     var centerY: Int = 0
+    private var world = createWorld()
 
     override fun display(terminal: TileGrid) {
+//        world = createWorld()
+
         val left = getScrollX()
         val top = getScrollY()
         for (x in 0 until screenWidth) {
@@ -40,23 +41,18 @@ class PlayScreen : GameScreen {
 
     }
 
-    override fun handleInput(key: KeyStroke): GameScreen? {
-        if (key.getCharacter() == 'h' || key.inputTypeIs(ArrowLeft) || key.inputTypeIs(Numpad4)) {
-            scrollBy(-1, 0)
-        } else if (key.getCharacter() == 'l' || key.inputTypeIs(ArrowRight) || key.inputTypeIs(Numpad6)) {
-            scrollBy(1, 0)
-        } else if (key.getCharacter() == 'k' || key.inputTypeIs(ArrowUp) || key.inputTypeIs(Numpad8)) {
-            scrollBy(0, -1)
-        } else if (key.getCharacter() == 'j' || key.inputTypeIs(ArrowDown) || key.inputTypeIs(Numpad2)) {
-            scrollBy(0, 1)
-        } else if (key.getCharacter() == 'y' || key.inputTypeIs(Numpad7)) {
-            scrollBy(-1, -1)
-        } else if (key.getCharacter() == 'u' || key.inputTypeIs(Numpad9)) {
-            scrollBy(1, -1)
-        } else if (key.getCharacter() == 'b' || key.inputTypeIs(Numpad1)) {
-            scrollBy(-1, 1)
-        } else if (key.getCharacter() == 'n' || key.inputTypeIs(Numpad3)) {
-            scrollBy(1, 1)
+    override fun handleInput(event: KeyboardEvent): GameScreen? {
+        when (event.code) {
+            KEY_H, LEFT, NUMPAD_4 -> scrollBy(-1, 0)
+            KEY_L, RIGHT, NUMPAD_6 -> scrollBy(1, 0)
+            KEY_K, UP, NUMPAD_8 -> scrollBy(0, -1)
+            KEY_J, DOWN, NUMPAD_2 -> scrollBy(0, 1)
+            KEY_Y, NUMPAD_7 -> scrollBy(-1, -1)
+            KEY_U, NUMPAD_9 -> scrollBy(1, -1)
+            KEY_B, NUMPAD_1 -> scrollBy(-1, 1)
+            KEY_N, NUMPAD_3 -> scrollBy(1, 1)
+            else -> {
+            }
         }
 
         return null
@@ -76,7 +72,8 @@ class PlayScreen : GameScreen {
     }
 
     private fun createWorld(): World {
-        return WorldBuilder(100, 100)
+        return WorldBuilder(80, 43)
+            .usingTravellerGenerator()
             .build()
     }
 }
@@ -101,14 +98,4 @@ class World(var tiles: Array<Array<Tile>>) {
     }
 }
 
-class WorldBuilder(val width: Int, val height: Int) {
-
-    fun build(): World {
-        return World(randomTiles())
-    }
-
-    private fun randomTiles(): Array<Array<Tile>> {
-        return Array(width) { Array(height) { if (Math.random() > 0.5) WALL else FLOOR } }
-    }
-}
 
