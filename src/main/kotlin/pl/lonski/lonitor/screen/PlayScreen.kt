@@ -17,36 +17,30 @@ class PlayScreen : GameScreen {
 
     private val screenWidth: Int = 80
     private val screenHeight: Int = 43
-
-    private var world = createWorld()
-    private var player: Creature
+    private val world = createWorld()
+    private val creatureFactory = CreatureFactory(world)
+    private val player: Creature = creatureFactory.newPlayer()
 
     init {
-        val creatureFactory = CreatureFactory(world)
-        player = creatureFactory.newPlayer()
-        player.setPosition(world.getEmptyLocation())
+        repeat(5) { creatureFactory.newFungus() }
     }
 
     override fun display(terminal: TileGrid) {
-
+        world.update()
         val left = getScrollX()
         val top = getScrollY()
         for (x in 0 until screenWidth) {
             for (y in 0 until screenHeight) {
                 val worldPos = Point(x + left, y + top)
-
-                val glyph = if (worldPos == player.position()) player.glyph() else world.glyph(worldPos)
-                val color = if (worldPos == player.position()) player.color() else world.color(worldPos)
                 terminal.setTileAt(
                     Positions.create(x, y),
                     Tiles.newBuilder()
-                        .withForegroundColor(color)
-                        .withCharacter(glyph)
+                        .withForegroundColor(world.color(worldPos))
+                        .withCharacter(world.glyph(worldPos))
                         .build()
                 )
             }
         }
-
     }
 
     override fun handleInput(event: KeyboardEvent): GameScreen? {
@@ -75,7 +69,7 @@ class PlayScreen : GameScreen {
     }
 
     private fun createWorld(): World {
-        return WorldBuilder(150, 100)
+        return WorldBuilder(80, 43)
             .usingTravellerGenerator()
             .build()
     }

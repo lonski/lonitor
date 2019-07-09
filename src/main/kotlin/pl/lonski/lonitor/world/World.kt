@@ -1,19 +1,20 @@
 package pl.lonski.lonitor.world
 
-import org.hexworks.zircon.api.color.ANSITileColor
+import org.hexworks.zircon.api.color.TileColor
 import pl.lonski.lonitor.Point
 
 class World(private var tiles: Array<Array<Tile>>) {
 
     val width = tiles.size
     val height = tiles[0].size
+    private val creatures = ArrayList<Creature>()
 
     fun glyph(pos: Point): Char {
-        return tiles[pos.x][pos.y].glyph
+        return creature(pos)?.glyph() ?: tiles[pos.x][pos.y].glyph
     }
 
-    fun color(pos: Point): ANSITileColor {
-        return tiles[pos.x][pos.y].color
+    fun color(pos: Point): TileColor {
+        return creature(pos)?.color() ?: tiles[pos.x][pos.y].color
     }
 
     fun tile(pos: Point): Tile {
@@ -23,7 +24,25 @@ class World(private var tiles: Array<Array<Tile>>) {
         return tiles[pos.x][pos.y]
     }
 
-    fun getEmptyLocation(): Point {
+    fun creature(pos: Point): Creature? {
+        return creatures.find { it.position() == pos }
+    }
+
+    fun update() {
+        val toUpdate = ArrayList(creatures)
+        toUpdate.forEach { it.update() }
+    }
+
+    fun remove(creature: Creature) {
+        creatures.remove(creature)
+    }
+
+    fun putAtEmptyLocation(creature: Creature) {
+        creatures.add(creature)
+        creature.setPosition(getEmptyLocation())
+    }
+
+    private fun getEmptyLocation(): Point {
         var pos: Point
         do {
             pos = Point((Math.random() * width).toInt(), (Math.random() * height).toInt())
