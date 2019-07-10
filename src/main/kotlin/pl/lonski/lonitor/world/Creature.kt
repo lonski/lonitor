@@ -2,19 +2,29 @@ package pl.lonski.lonitor.world
 
 import org.hexworks.zircon.api.color.TileColor
 import pl.lonski.lonitor.Point
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.random.Random
 
 class Creature(
     private val glyph: Char,
     private val color: TileColor,
-    private val world: World
+    private val world: World,
+    private var maxHp: Int,
+    private var attackValue: Int,
+    private var defenseValue: Int
 ) {
+    private var hp: Int = maxHp
     private var ai: CreatureAi = CreatureAi(this)
     private var pos: Point = Point(0, 0)
 
     fun glyph(): Char = glyph
     fun color(): TileColor = color
     fun position(): Point = pos
+    fun hp(): Int = hp
+    fun maxHp(): Int = maxHp
+    fun attackValue(): Int = attackValue
+    fun defenseValue(): Int = defenseValue
 
     fun setPosition(pos: Point) {
         this.pos = pos
@@ -40,8 +50,16 @@ class Creature(
         }
     }
 
+    fun modifyHp(amount: Int) {
+        hp = min(maxHp, hp + amount)
+        if (hp <= 0) {
+            world.remove(this)
+        }
+    }
+
     private fun attack(creature: Creature) {
-        world.remove(creature)
+        val damage: Int = Random.nextInt(1, max(1, attackValue - creature.defenseValue()))
+        creature.modifyHp(-damage)
     }
 }
 
