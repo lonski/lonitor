@@ -1,7 +1,7 @@
 package pl.lonski.lonitor.world
 
-import org.hexworks.zircon.api.color.TileColor
 import pl.lonski.lonitor.Point
+import java.awt.Color
 
 class World(private var tiles: Array<Array<Tile>>) {
 
@@ -13,7 +13,7 @@ class World(private var tiles: Array<Array<Tile>>) {
         return creature(pos)?.glyph() ?: tiles[pos.x][pos.y].glyph
     }
 
-    fun color(pos: Point): TileColor {
+    fun color(pos: Point): Color {
         return creature(pos)?.color() ?: tiles[pos.x][pos.y].color
     }
 

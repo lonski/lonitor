@@ -1,22 +1,17 @@
 package pl.lonski.lonitor.screen
 
-import org.hexworks.zircon.api.color.ANSITileColor.MAGENTA
-import org.hexworks.zircon.api.color.ANSITileColor.WHITE
-import org.hexworks.zircon.api.data.Position
-import org.hexworks.zircon.api.grid.TileGrid
-import org.hexworks.zircon.api.uievent.KeyCode
-import org.hexworks.zircon.api.uievent.KeyboardEvent
-import pl.lonski.lonitor.screen.GameScreen
-import pl.lonski.lonitor.screen.PlayScreen
+import asciiPanel.AsciiPanel
+import java.awt.Color
+import java.awt.event.KeyEvent
 
 class StartScreen : GameScreen {
 
-    override fun display(terminal: TileGrid) {
-        drawText("Lonitor", Position.offset1x1(), MAGENTA, terminal)
-        drawText("[Press enter to start]", Position.create(1, 3), WHITE, terminal)
+    override fun display(terminal: AsciiPanel) {
+        terminal.write("Lonitor", 1, 1, Color.MAGENTA)
+        terminal.write("[Press enter to start]", 1, 2, Color.WHITE)
     }
 
-    override fun handleInput(event: KeyboardEvent): GameScreen? {
-        return if (event.code == KeyCode.ENTER) PlayScreen() else null
+    override fun handleInput(key: KeyEvent): GameScreen? {
+        return if (key.keyCode == KeyEvent.VK_ENTER) PlayScreen() else null
     }
 }

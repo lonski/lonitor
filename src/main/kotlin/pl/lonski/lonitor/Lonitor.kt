@@ -1,45 +1,48 @@
 package pl.lonski.lonitor
 
-import org.hexworks.zircon.api.AppConfigs
-import org.hexworks.zircon.api.CP437TilesetResources
-import org.hexworks.zircon.api.Sizes
-import org.hexworks.zircon.api.SwingApplications
-import org.hexworks.zircon.api.application.Application
-import org.hexworks.zircon.api.uievent.KeyboardEvent
-import org.hexworks.zircon.api.uievent.KeyboardEventProcessor
-import org.hexworks.zircon.api.uievent.KeyboardEventType.KEY_PRESSED
-import org.hexworks.zircon.api.uievent.UIEventPhase
+import asciiPanel.AsciiPanel
 import pl.lonski.lonitor.screen.GameScreen
 import pl.lonski.lonitor.screen.StartScreen
+import java.awt.event.KeyEvent
+import java.awt.event.KeyListener
+import javax.swing.JFrame
 
-class Lonitor {
 
-    private val app = createApp()
+class Lonitor : JFrame(), KeyListener {
+
+    private val terminal = AsciiPanel(80, 24)
     private var screen: GameScreen = StartScreen()
 
     fun start() {
-        app.start()
-        screen.display(app.tileGrid)
-        app.tileGrid.processKeyboardEvents(KEY_PRESSED, object : KeyboardEventProcessor {
-            override fun process(event: KeyboardEvent, phase: UIEventPhase) {
-                val newScreen: GameScreen? = screen.handleInput(event)
-                if (newScreen != null) {
-                    screen = newScreen
-                }
-                screen.display(app.tileGrid)
-            }
-        })
+        add(terminal)
+        pack()
+        defaultCloseOperation = EXIT_ON_CLOSE
+        isVisible = true
+        addKeyListener(this)
+        repaint()
     }
 
-    private fun createApp(): Application {
-        return SwingApplications.buildApplication(
-            AppConfigs.newConfig()
-                .withDefaultTileset(CP437TilesetResources.mdCurses16x16())
-                .withSize(Sizes.create(80, 43))
-                .build()
-        )
+    override fun repaint() {
+        terminal.clear()
+        screen.display(terminal)
+        super.repaint()
     }
+
+    override fun keyPressed(e: KeyEvent?) {
+        if (e != null) {
+            val newScreen = screen.handleInput(e)
+            if (newScreen != null) {
+                screen = newScreen
+            }
+            repaint()
+        }
+    }
+
+    override fun keyTyped(e: KeyEvent?) {}
+
+    override fun keyReleased(e: KeyEvent?) {}
 }
+
 
 fun main() {
     Lonitor().start()

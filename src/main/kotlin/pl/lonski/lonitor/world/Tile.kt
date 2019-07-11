@@ -1,13 +1,12 @@
 package pl.lonski.lonitor.world
 
-import org.hexworks.zircon.api.color.ANSITileColor
-import org.hexworks.zircon.api.color.TileColor
+import java.awt.Color
 
-enum class Tile(val glyph: Char, val color: TileColor) {
+enum class Tile(val glyph: Char, val color: Color) {
 
-    FLOOR('.', ANSITileColor.GRAY),
-    WALL('#', ANSITileColor.GRAY),
-    BOUNDS(' ', ANSITileColor.GRAY);
+    FLOOR('.', Color.GRAY),
+    WALL('#', Color.GRAY),
+    BOUNDS(' ', Color.GRAY);
 
     fun isGroud(): Boolean = this == FLOOR
 }

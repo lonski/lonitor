@@ -1,14 +1,14 @@
 package pl.lonski.lonitor.world
 
-import org.hexworks.zircon.api.color.TileColor
 import pl.lonski.lonitor.Point
+import java.awt.Color
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random
 
 class Creature(
     private val glyph: Char,
-    private val color: TileColor,
+    private val color: Color,
     private val world: World,
     private var maxHp: Int,
     private var attackValue: Int,
@@ -19,7 +19,7 @@ class Creature(
     private var pos: Point = Point(0, 0)
 
     fun glyph(): Char = glyph
-    fun color(): TileColor = color
+    fun color(): Color = color
     fun position(): Point = pos
     fun hp(): Int = hp
     fun maxHp(): Int = maxHp

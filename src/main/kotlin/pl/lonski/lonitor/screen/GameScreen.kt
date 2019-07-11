@@ -1,23 +1,11 @@
 package pl.lonski.lonitor.screen
 
-import org.hexworks.zircon.api.CharacterTileStrings
-import org.hexworks.zircon.api.color.ANSITileColor
-import org.hexworks.zircon.api.data.Position
-import org.hexworks.zircon.api.grid.TileGrid
-import org.hexworks.zircon.api.uievent.KeyboardEvent
+import asciiPanel.AsciiPanel
+import java.awt.event.KeyEvent
 
 interface GameScreen {
 
-    fun display(terminal: TileGrid)
+    fun display(terminal: AsciiPanel)
 
-    fun handleInput(event: KeyboardEvent): GameScreen?
-
-    fun drawText(text: String, position: Position, color: ANSITileColor, terminal: TileGrid) {
-        CharacterTileStrings.newBuilder()
-            .withText(text)
-            .withForegroundColor(color)
-            .build()
-            .toTileGraphic(terminal.currentTileset())
-            .drawOnto(terminal, position)
-    }
+    fun handleInput(key: KeyEvent): GameScreen?
 }
