@@ -10,6 +10,7 @@ class Creature(
     private val glyph: Char,
     private val color: Color,
     private val world: World,
+    private val name: String,
     private var maxHp: Int,
     private var attackValue: Int,
     private var defenseValue: Int
@@ -53,7 +54,7 @@ class Creature(
     fun attack(creature: Creature) {
         val damage: Int = Random.nextInt(1, max(1, attackValue - creature.defenseValue()))
         creature.modifyHp(-damage)
-        doAction("attack the '${creature.glyph}' for $damage damage")
+        doAction("attack ${creature.name} for $damage damage")
     }
 
     fun modifyHp(amount: Int) {
@@ -67,9 +68,11 @@ class Creature(
     fun doAction(action: String) {
         inRadiusOf(9) { (x, y) ->
             val point = Point(pos.x + x, pos.y + y)
-            if (point == position()) notify("You $action.") else world.creature(point)?.run {
-                notify("The '$glyph' ${makeSecondPerson(action)}.")
-            }
+            val creature = world.creature(point)
+            if (creature != null) if (creature == this)
+                creature.notify("You $action.")
+            else
+                creature.notify("The $name ${makeSecondPerson(action)}.")
         }
     }
 
@@ -81,7 +84,8 @@ class Creature(
     }
 
     private fun makeSecondPerson(action: String): String {
-        return action.replaceFirst(" ", "s ")
+        val idx = action.indexOf(' ')
+        return if (idx > 0) action.replaceFirst(" ", "s ") else action + "s"
     }
 }
 
