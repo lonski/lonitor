@@ -15,7 +15,8 @@ class FungusAi(creature: Creature, private val creatureFactory: CreatureFactory)
     private fun spread() {
         val dest = Point(
             creature.position().x + Random.nextInt(-1, 2),
-            creature.position().y + Random.nextInt(-1, 2)
+            creature.position().y + Random.nextInt(-1, 2),
+            creature.position().z
         )
         if (creature.canEnter(dest)) {
             creatureFactory.newFungus().setPosition(dest)

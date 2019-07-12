@@ -4,8 +4,11 @@ import pl.lonski.lonitor.Line
 import pl.lonski.lonitor.Point
 import kotlin.math.max
 
-class TravelerDungeonGenerator(private val width: Int, private val height: Int) {
-
+class TravelerDungeonGenerator(
+    private val width: Int,
+    private val height: Int,
+    private val fillLevel: Float
+) : DungeonGenerator {
     private val directions: List<Point> = Point.getDirections4()
     private val sizeMin = 3
     private val sizeMax = 8
@@ -13,14 +16,14 @@ class TravelerDungeonGenerator(private val width: Int, private val height: Int) 
 
     private var tiles = Array(width) { Array(height) { Tile.WALL } }
     private var pos = getRandomPoint()
-    private var lastDirection = Point(0, 0)
+    private var lastDirection = Point(0, 0, 0)
 
-    fun generate(fillLevel: Float): Array<Array<Tile>> {
+    override fun generate(): Array<Array<Tile>> {
         do {
             (0..iterationBatchSize).forEach { _ -> nextIteration() }
         } while (calcFillLevel() < fillLevel)
 
-        return tiles;
+        return tiles
     }
 
     private fun calcFillLevel(): Float {
@@ -50,7 +53,7 @@ class TravelerDungeonGenerator(private val width: Int, private val height: Int) 
 
     private fun tryMakeCorridor(direction: Point): Boolean {
         val size = randomSize()
-        val end = Point(pos.x + direction.x * size, pos.y + direction.y * size)
+        val end = Point(pos.x + direction.x * size, pos.y + direction.y * size, 0)
         if (isWithinBorders(end)) {
             Line(pos, end).points.forEach { tiles[it.x][it.y] = Tile.FLOOR }
             pos = end
@@ -61,8 +64,8 @@ class TravelerDungeonGenerator(private val width: Int, private val height: Int) 
 
     private fun tryMakeRoom(direction: Point): Boolean {
         val points = ArrayList<Point>()
-        val start = Point(pos.x + direction.x, pos.y + direction.y)
-        val end = Point(start.x + randomSize(), start.y + randomSize())
+        val start = Point(pos.x + direction.x, pos.y + direction.y, 0)
+        val end = Point(start.x + randomSize(), start.y + randomSize(), 0)
 
         if (!isWithinBorders(end)) {
             return false
@@ -72,7 +75,7 @@ class TravelerDungeonGenerator(private val width: Int, private val height: Int) 
             for (y in start.y..end.y) {
                 if (tiles[x][y] != Tile.WALL)
                     return false
-                points.add(Point(x, y))
+                points.add(Point(x, y, 0))
             }
         }
 
@@ -93,6 +96,7 @@ class TravelerDungeonGenerator(private val width: Int, private val height: Int) 
     private fun getRandomPoint() =
         Point(
             max(2, (Math.random() * width - 2).toInt()),
-            max(2, (Math.random() * height - 2).toInt())
+            max(2, (Math.random() * height - 2).toInt()),
+            0
         )
 }

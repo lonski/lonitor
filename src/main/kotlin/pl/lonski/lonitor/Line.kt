@@ -7,8 +7,8 @@ class Line(start: Point, end: Point) {
     val points: List<Point> = calculatePoints(start, end)
 
     private fun calculatePoints(start: Point, end: Point): List<Point> {
-        val pos = Point(start.x, start.y)
-        val list = ArrayList(listOf(Point(pos.x, pos.y)))
+        val pos = Point(start.x, start.y, start.z)
+        val list = ArrayList(listOf(Point(pos.x, pos.y, pos.z)))
 
         val dx = abs(end.x - pos.x)
         val dy = abs(end.y - pos.y)
@@ -28,7 +28,7 @@ class Line(start: Point, end: Point) {
                 err += dx
                 pos.y += yi
             }
-            list.add(Point(pos.x, pos.y))
+            list.add(Point(pos.x, pos.y, pos.z))
         }
 
         return list

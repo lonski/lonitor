@@ -18,7 +18,7 @@ class Creature(
 ) {
     private var hp: Int = maxHp
     private var ai: CreatureAi = CreatureAi(this)
-    private var pos: Point = Point(0, 0)
+    private var pos: Point = Point(0, 0, 0)
 
     fun glyph(): Char = glyph
     fun color(): Color = color
@@ -46,8 +46,8 @@ class Creature(
         ai.onNotify(message)
     }
 
-    fun moveBy(mx: Int, my: Int) {
-        val dest = Point(pos.x + mx, pos.y + my)
+    fun moveBy(mx: Int, my: Int, mz: Int) {
+        val dest = Point(pos.x + mx, pos.y + my, pos.z + mz)
         val creature = world.creature(dest)
         if (creature == null) ai.onEnter(dest, world.tile(dest)) else attack(creature)
     }
@@ -67,8 +67,8 @@ class Creature(
     }
 
     fun doAction(action: String) {
-        inRadiusOf(9) { (x, y) ->
-            val point = Point(pos.x + x, pos.y + y)
+        inRadiusOf(9) { (x, y, z) ->
+            val point = Point(pos.x + x, pos.y + y, pos.z + z)
             val creature = world.creature(point)
             if (creature != null) if (creature == this)
                 creature.notify("You $action.")
@@ -80,7 +80,7 @@ class Creature(
     fun inRadiusOf(r: Int, f: (Point) -> Unit) {
         for (ox in -r..r) for (oy in -r..r) {
             if (ox * ox + oy * oy > r * r) continue
-            f(Point(ox, oy))
+            f(Point(ox, oy, 0))
         }
     }
 

@@ -30,7 +30,7 @@ class PlayScreen : GameScreen {
         val top = getScrollY()
         for (y in 0 until screenHeight) {
             for (x in 0 until screenWidth) {
-                val worldPos = Point(x + left, y + top)
+                val worldPos = Point(x + left, y + top, world.currentLevel())
                 terminal.write(world.glyph(worldPos), x, y, world.color(worldPos))
             }
         }
@@ -52,14 +52,14 @@ class PlayScreen : GameScreen {
 
     override fun handleInput(key: KeyEvent): GameScreen? {
         when (key.keyCode) {
-            VK_H, VK_LEFT, VK_NUMPAD4 -> player.moveBy(-1, 0)
-            VK_L, VK_RIGHT, VK_NUMPAD6 -> player.moveBy(1, 0)
-            VK_K, VK_UP, VK_NUMPAD8 -> player.moveBy(0, -1)
-            VK_J, VK_DOWN, VK_NUMPAD2 -> player.moveBy(0, 1)
-            VK_Y, VK_NUMPAD7 -> player.moveBy(-1, -1)
-            VK_U, VK_NUMPAD9 -> player.moveBy(1, -1)
-            VK_B, VK_NUMPAD1 -> player.moveBy(-1, 1)
-            VK_N, VK_NUMPAD3 -> player.moveBy(1, 1)
+            VK_H, VK_LEFT, VK_NUMPAD4 -> player.moveBy(-1, 0, 0)
+            VK_L, VK_RIGHT, VK_NUMPAD6 -> player.moveBy(1, 0, 0)
+            VK_K, VK_UP, VK_NUMPAD8 -> player.moveBy(0, -1, 0)
+            VK_J, VK_DOWN, VK_NUMPAD2 -> player.moveBy(0, 1, 0)
+            VK_Y, VK_NUMPAD7 -> player.moveBy(-1, -1, 0)
+            VK_U, VK_NUMPAD9 -> player.moveBy(1, -1, 0)
+            VK_B, VK_NUMPAD1 -> player.moveBy(-1, 1, 0)
+            VK_N, VK_NUMPAD3 -> player.moveBy(1, 1, 0)
             else -> {
             }
         }
@@ -78,6 +78,7 @@ class PlayScreen : GameScreen {
     private fun createWorld(): World {
         return WorldBuilder(100, 50)
             .usingTravellerGenerator()
+            .levels(1)
             .build()
     }
 }
