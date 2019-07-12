@@ -5,9 +5,9 @@ import java.awt.Color
 
 class CreatureFactory(private val world: World) {
 
-    fun newPlayer(): Creature {
+    fun newPlayer(messages: MutableList<String>): Creature {
         val c = Creature('@', Color.WHITE, world, 100, 20, 5)
-        c.setAi(PlayerAi(c))
+        c.setAi(PlayerAi(c, messages))
         world.putAtEmptyLocation(c)
         return c
     }

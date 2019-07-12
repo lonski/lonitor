@@ -40,26 +40,48 @@ class Creature(
         ai.onUpdate()
     }
 
+    fun notify(message: String) {
+        ai.onNotify(message)
+    }
+
     fun moveBy(mx: Int, my: Int) {
         val dest = Point(pos.x + mx, pos.y + my)
         val creature = world.creature(dest)
-        if (creature == null) {
-            ai.onEnter(dest, world.tile(dest))
-        } else {
-            attack(creature)
-        }
+        if (creature == null) ai.onEnter(dest, world.tile(dest)) else attack(creature)
+    }
+
+    fun attack(creature: Creature) {
+        val damage: Int = Random.nextInt(1, max(1, attackValue - creature.defenseValue()))
+        creature.modifyHp(-damage)
+        doAction("attack the '${creature.glyph}' for $damage damage")
     }
 
     fun modifyHp(amount: Int) {
         hp = min(maxHp, hp + amount)
         if (hp <= 0) {
+            doAction("die")
             world.remove(this)
         }
     }
 
-    private fun attack(creature: Creature) {
-        val damage: Int = Random.nextInt(1, max(1, attackValue - creature.defenseValue()))
-        creature.modifyHp(-damage)
+    fun doAction(action: String) {
+        inRadiusOf(9) { (x, y) ->
+            val point = Point(pos.x + x, pos.y + y)
+            if (point == position()) notify("You $action.") else world.creature(point)?.run {
+                notify("The '$glyph' ${makeSecondPerson(action)}.")
+            }
+        }
+    }
+
+    fun inRadiusOf(r: Int, f: (Point) -> Unit) {
+        for (ox in -r..r) for (oy in -r..r) {
+            if (ox * ox + oy * oy > r * r) continue
+            f(Point(ox, oy))
+        }
+    }
+
+    private fun makeSecondPerson(action: String): String {
+        return action.replaceFirst(" ", "s ")
     }
 }
 
@@ -67,14 +89,17 @@ open class CreatureAi(protected val creature: Creature) {
 
     open fun onEnter(pos: Point, tile: Tile) {}
     open fun onUpdate() {}
+    open fun onNotify(message: String) {}
 }
 
-class PlayerAi(creature: Creature) : CreatureAi(creature) {
+class PlayerAi(creature: Creature, private val messages: MutableList<String>) : CreatureAi(creature) {
 
     override fun onEnter(pos: Point, tile: Tile) {
-        if (tile.isGroud()) {
-            creature.setPosition(pos)
-        }
+        if (tile.isGroud()) creature.setPosition(pos)
+    }
+
+    override fun onNotify(message: String) {
+        messages.add(message)
     }
 }
 
@@ -83,9 +108,7 @@ class FungusAi(creature: Creature, private val creatureFactory: CreatureFactory)
     private var spreadCount = 0
 
     override fun onUpdate() {
-        if (spreadCount < 1 && Math.random() < 0.02) {
-            spread()
-        }
+        if (spreadCount < 1 && Math.random() < 0.02) spread()
     }
 
     private fun spread() {
@@ -96,6 +119,7 @@ class FungusAi(creature: Creature, private val creatureFactory: CreatureFactory)
         if (creature.canEnter(dest)) {
             creatureFactory.newFungus().setPosition(dest)
             spreadCount++
+            creature.doAction("spawn a child")
         }
     }
 }

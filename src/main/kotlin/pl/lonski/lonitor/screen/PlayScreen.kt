@@ -16,8 +16,9 @@ class PlayScreen : GameScreen {
     private val screenWidth: Int = 80
     private val screenHeight: Int = 24
     private val world = createWorld()
+    private val messages: MutableList<String> = ArrayList()
     private val creatureFactory = CreatureFactory(world)
-    private val player: Creature = creatureFactory.newPlayer()
+    private val player: Creature = creatureFactory.newPlayer(messages)
 
     init {
         repeat(5) { creatureFactory.newFungus() }
@@ -33,10 +34,20 @@ class PlayScreen : GameScreen {
                 terminal.write(world.glyph(worldPos), x, y, world.color(worldPos))
             }
         }
+        displayStats(terminal)
+        displayMessages(terminal)
     }
 
-    private fun displayStats() {
+    private fun displayStats(terminal: AsciiPanel) {
+        val stats = "${player.hp()}/${player.maxHp()} hp"
+        terminal.write(stats, 0, screenHeight - 1)
+    }
 
+    private fun displayMessages(terminal: AsciiPanel) {
+        for (i in messages.size - 1 downTo 0) {
+            terminal.write(messages[i], 0, messages.size - i - 1)
+        }
+        messages.clear()
     }
 
     override fun handleInput(key: KeyEvent): GameScreen? {
