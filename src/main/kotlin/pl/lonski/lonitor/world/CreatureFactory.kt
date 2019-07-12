@@ -1,5 +1,8 @@
 package pl.lonski.lonitor.world
 
+import pl.lonski.lonitor.creature.Creature
+import pl.lonski.lonitor.creature.FungusAi
+import pl.lonski.lonitor.creature.PlayerAi
 import java.awt.Color
 
 

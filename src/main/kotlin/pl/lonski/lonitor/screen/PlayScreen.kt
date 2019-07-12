@@ -2,7 +2,7 @@ package pl.lonski.lonitor.screen
 
 import asciiPanel.AsciiPanel
 import pl.lonski.lonitor.Point
-import pl.lonski.lonitor.world.Creature
+import pl.lonski.lonitor.creature.Creature
 import pl.lonski.lonitor.world.CreatureFactory
 import pl.lonski.lonitor.world.World
 import pl.lonski.lonitor.world.WorldBuilder

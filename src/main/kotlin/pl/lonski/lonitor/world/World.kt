@@ -1,6 +1,7 @@
 package pl.lonski.lonitor.world
 
 import pl.lonski.lonitor.Point
+import pl.lonski.lonitor.creature.Creature
 import java.awt.Color
 
 class World(private var tiles: Array<Array<Tile>>) {

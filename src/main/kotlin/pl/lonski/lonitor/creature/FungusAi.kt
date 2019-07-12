@@ -1,0 +1,26 @@
+package pl.lonski.lonitor.creature
+
+import pl.lonski.lonitor.Point
+import pl.lonski.lonitor.world.CreatureFactory
+import kotlin.random.Random
+
+class FungusAi(creature: Creature, private val creatureFactory: CreatureFactory) : CreatureAi(creature) {
+
+    private var spreadCount = 0
+
+    override fun onUpdate() {
+        if (spreadCount < 1 && Math.random() < 0.02) spread()
+    }
+
+    private fun spread() {
+        val dest = Point(
+            creature.position().x + Random.nextInt(-1, 2),
+            creature.position().y + Random.nextInt(-1, 2)
+        )
+        if (creature.canEnter(dest)) {
+            creatureFactory.newFungus().setPosition(dest)
+            spreadCount++
+            creature.doAction("spawn a child")
+        }
+    }
+}

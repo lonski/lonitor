@@ -1,6 +1,7 @@
-package pl.lonski.lonitor.world
+package pl.lonski.lonitor.creature
 
 import pl.lonski.lonitor.Point
+import pl.lonski.lonitor.world.World
 import java.awt.Color
 import kotlin.math.max
 import kotlin.math.min
@@ -52,7 +53,7 @@ class Creature(
     }
 
     fun attack(creature: Creature) {
-        val damage: Int = Random.nextInt(1, max(1, attackValue - creature.defenseValue()))
+        val damage: Int = Random.nextInt(1, max(1, attackValue() - creature.defenseValue()))
         creature.modifyHp(-damage)
         doAction("attack ${creature.name} for $damage damage")
     }
@@ -89,41 +90,3 @@ class Creature(
     }
 }
 
-open class CreatureAi(protected val creature: Creature) {
-
-    open fun onEnter(pos: Point, tile: Tile) {}
-    open fun onUpdate() {}
-    open fun onNotify(message: String) {}
-}
-
-class PlayerAi(creature: Creature, private val messages: MutableList<String>) : CreatureAi(creature) {
-
-    override fun onEnter(pos: Point, tile: Tile) {
-        if (tile.isGroud()) creature.setPosition(pos)
-    }
-
-    override fun onNotify(message: String) {
-        messages.add(message)
-    }
-}
-
-class FungusAi(creature: Creature, private val creatureFactory: CreatureFactory) : CreatureAi(creature) {
-
-    private var spreadCount = 0
-
-    override fun onUpdate() {
-        if (spreadCount < 1 && Math.random() < 0.02) spread()
-    }
-
-    private fun spread() {
-        val dest = Point(
-            creature.position().x + Random.nextInt(-1, 1),
-            creature.position().y + Random.nextInt(-1, 1)
-        )
-        if (creature.canEnter(dest)) {
-            creatureFactory.newFungus().setPosition(dest)
-            spreadCount++
-            creature.doAction("spawn a child")
-        }
-    }
-}
