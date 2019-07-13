@@ -4,6 +4,7 @@ import asciiPanel.AsciiPanel
 import pl.lonski.lonitor.Point
 import pl.lonski.lonitor.creature.Creature
 import pl.lonski.lonitor.world.CreatureFactory
+import pl.lonski.lonitor.world.Fov
 import pl.lonski.lonitor.world.World
 import pl.lonski.lonitor.world.WorldBuilder
 import java.awt.Color
@@ -17,9 +18,10 @@ class PlayScreen : GameScreen {
     private val screenWidth: Int = 80
     private val screenHeight: Int = 24
     private val world = createWorld()
+    private val fov = Fov(world)
     private val messages: MutableList<String> = ArrayList()
     private val creatureFactory = CreatureFactory(world)
-    private val player: Creature = creatureFactory.newPlayer(messages)
+    private val player: Creature = creatureFactory.newPlayer(messages, fov)
 
     init {
         repeat(5) { creatureFactory.newFungus() }
@@ -34,7 +36,7 @@ class PlayScreen : GameScreen {
                 val worldPos = Point(x + left, y + top, player.position().z)
                 val inFov = player.canSee(worldPos)
                 val color = if (inFov) world.color(worldPos) else Color.DARK_GRAY
-                val glyph = world.glyph(worldPos)
+                val glyph = if (inFov) world.glyph(worldPos) else fov.tile(worldPos).glyph
                 terminal.write(glyph, x, y, color)
             }
         }

@@ -1,7 +1,7 @@
 package pl.lonski.lonitor.creature
 
-import pl.lonski.lonitor.Line
 import pl.lonski.lonitor.Point
+import pl.lonski.lonitor.inRadiusOf
 import pl.lonski.lonitor.world.Tile
 import pl.lonski.lonitor.world.World
 import java.awt.Color
@@ -30,6 +30,7 @@ class Creature(
     fun maxHp(): Int = maxHp
     fun attackValue(): Int = attackValue
     fun defenseValue(): Int = defenseValue
+    fun visionRadius(): Int = visionRadius
 
     fun setPosition(pos: Point) {
         this.pos = pos
@@ -49,25 +50,7 @@ class Creature(
         ai.onNotify(message)
     }
 
-    fun canSee(p: Point): Boolean {
-        if (p == pos)
-            return true
-
-        if (p.z != pos.z || !inVisionRadius(p))
-            return false
-
-        for (point in Line(p, pos).points)
-            if (!world.tile(point).isGround())
-                return false
-
-        return true
-    }
-
-    private fun inVisionRadius(p: Point): Boolean {
-        val dx = p.x - pos.x
-        val dy = p.y - pos.y
-        return dx * dx + dy * dy <= visionRadius * visionRadius
-    }
+    fun canSee(pos: Point): Boolean = ai.canSee(pos)
 
     fun moveBy(mx: Int, my: Int, mz: Int) {
         if (mz != 0) {
@@ -100,21 +83,16 @@ class Creature(
         }
     }
 
+    fun tile(pos: Point): Tile = world.tile(pos)
+
     fun doAction(action: String) {
         inRadiusOf(9) { (x, y, z) ->
             val point = Point(pos.x + x, pos.y + y, pos.z + z)
             val creature = world.creature(point)
             if (creature != null) if (creature == this)
                 creature.notify("You $action.")
-            else
+            else if (creature.canSee(position()))
                 creature.notify("The $name ${makeSecondPerson(action)}.")
-        }
-    }
-
-    fun inRadiusOf(r: Int, f: (Point) -> Unit) {
-        for (ox in -r..r) for (oy in -r..r) {
-            if (ox * ox + oy * oy > r * r) continue
-            f(Point(ox, oy, 0))
         }
     }
 

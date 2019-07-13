@@ -45,6 +45,9 @@ class World(private var tiles: Array<Array<Array<Tile>>>) {
         creature.setPosition(getEmptyLocation(depth))
     }
 
+    fun isInBounds(pos: Point): Boolean =
+        pos.x in 0 until width && pos.y in 0 until height && pos.z in 0 until depth
+
     private fun getEmptyLocation(depth: Int): Point {
         var pos: Point
         do {
