@@ -1,5 +1,6 @@
 package pl.lonski.lonitor.creature
 
+import pl.lonski.lonitor.Line
 import pl.lonski.lonitor.Point
 import pl.lonski.lonitor.world.Tile
 import pl.lonski.lonitor.world.World
@@ -15,7 +16,8 @@ class Creature(
     private val name: String,
     private var maxHp: Int,
     private var attackValue: Int,
-    private var defenseValue: Int
+    private var defenseValue: Int,
+    private val visionRadius: Int = 9
 ) {
     private var hp: Int = maxHp
     private var ai: CreatureAi = CreatureAi(this)
@@ -45,6 +47,26 @@ class Creature(
 
     fun notify(message: String) {
         ai.onNotify(message)
+    }
+
+    fun canSee(p: Point): Boolean {
+        if (p == pos)
+            return true
+
+        if (p.z != pos.z || !inVisionRadius(p))
+            return false
+
+        for (point in Line(p, pos).points)
+            if (!world.tile(point).isGround())
+                return false
+
+        return true
+    }
+
+    private fun inVisionRadius(p: Point): Boolean {
+        val dx = p.x - pos.x
+        val dy = p.y - pos.y
+        return dx * dx + dy * dy <= visionRadius * visionRadius
     }
 
     fun moveBy(mx: Int, my: Int, mz: Int) {

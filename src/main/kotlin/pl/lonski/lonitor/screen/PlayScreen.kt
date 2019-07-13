@@ -32,7 +32,10 @@ class PlayScreen : GameScreen {
         for (y in 0 until screenHeight) {
             for (x in 0 until screenWidth) {
                 val worldPos = Point(x + left, y + top, player.position().z)
-                terminal.write(world.glyph(worldPos), x, y, world.color(worldPos))
+                val inFov = player.canSee(worldPos)
+                val color = if (inFov) world.color(worldPos) else Color.DARK_GRAY
+                val glyph = world.glyph(worldPos)
+                terminal.write(glyph, x, y, color)
             }
         }
         displayStats(terminal)
