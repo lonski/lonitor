@@ -53,6 +53,9 @@ class Creature(
     fun canSee(pos: Point): Boolean = ai.canSee(pos)
 
     fun moveBy(mx: Int, my: Int, mz: Int) {
+        if (mx == 0 && my == 0 && mz == 0)
+            return
+
         if (mz != 0) {
             val tile = world.tile(pos)
             if (mz == 1 && tile == Tile.STAIRS_DOWN)
@@ -70,7 +73,7 @@ class Creature(
     }
 
     fun attack(creature: Creature) {
-        val damage: Int = Random.nextInt(1, max(1, attackValue() - creature.defenseValue()))
+        val damage: Int = Random.nextInt(1, max(2, attackValue() - creature.defenseValue()))
         creature.modifyHp(-damage)
         doAction("attack ${creature.name} for $damage damage")
     }
@@ -84,6 +87,8 @@ class Creature(
     }
 
     fun tile(pos: Point): Tile = world.tile(pos)
+
+    fun creature(pos: Point): Creature? = world.creature(pos)
 
     fun doAction(action: String) {
         inRadiusOf(9) { (x, y, z) ->

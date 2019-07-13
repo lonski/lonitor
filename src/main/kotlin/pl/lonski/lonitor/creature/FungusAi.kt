@@ -19,7 +19,7 @@ class FungusAi(creature: Creature, private val creatureFactory: CreatureFactory)
             creature.position().z
         )
         if (creature.canEnter(dest)) {
-            creatureFactory.newFungus().setPosition(dest)
+            creatureFactory.newFungus(creature.position().z).setPosition(dest)
             spreadCount++
             creature.doAction("spawn a child")
         }

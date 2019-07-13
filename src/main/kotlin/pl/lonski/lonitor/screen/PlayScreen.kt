@@ -12,11 +12,12 @@ import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.*
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.random.Random
 
 class PlayScreen : GameScreen {
 
     private val screenWidth: Int = 80
-    private val screenHeight: Int = 24
+    private val screenHeight: Int = 23
     private val world = createWorld()
     private val fov = Fov(world)
     private val messages: MutableList<String> = ArrayList()
@@ -24,7 +25,14 @@ class PlayScreen : GameScreen {
     private val player: Creature = creatureFactory.newPlayer(messages, fov)
 
     init {
-        repeat(5) { creatureFactory.newFungus() }
+        spawnCreatures()
+    }
+
+    private fun spawnCreatures() {
+        for (depth in 0 until world.depth) {
+            repeat(Random.nextInt(5)) { creatureFactory.newFungus(depth) }
+            repeat(Random.nextInt(10)) { creatureFactory.newBat(depth) }
+        }
     }
 
     override fun display(terminal: AsciiPanel) {
@@ -47,7 +55,7 @@ class PlayScreen : GameScreen {
     private fun displayStats(terminal: AsciiPanel) {
         var stats = "hp: ${player.hp()}/${player.maxHp()}, depth: ${player.position().z + 1}"
         stats += " ".repeat(screenWidth - stats.length)
-        terminal.write(stats, 0, screenHeight - 1, Color.LIGHT_GRAY, Color.DARK_GRAY)
+        terminal.write(stats, 0, screenHeight, Color.LIGHT_GRAY, Color.DARK_GRAY)
     }
 
     private fun displayMessages(terminal: AsciiPanel) {
@@ -85,7 +93,7 @@ class PlayScreen : GameScreen {
     }
 
     private fun createWorld(): World {
-        return WorldBuilder(80, 24)
+        return WorldBuilder(120, 40)
             .usingTravellerGenerator()
             .levels(3)
             .build()
