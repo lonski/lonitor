@@ -1,6 +1,7 @@
 package pl.lonski.lonitor.creature
 
 import pl.lonski.lonitor.Point
+import pl.lonski.lonitor.world.Tile
 import pl.lonski.lonitor.world.World
 import java.awt.Color
 import kotlin.math.max
@@ -36,7 +37,7 @@ class Creature(
         this.ai = ai
     }
 
-    fun canEnter(pos: Point): Boolean = world.tile(pos).isGroud() && world.creature(pos) == null
+    fun canEnter(pos: Point): Boolean = world.tile(pos).isGround() && world.creature(pos) == null
 
     fun update() {
         ai.onUpdate()
@@ -47,6 +48,17 @@ class Creature(
     }
 
     fun moveBy(mx: Int, my: Int, mz: Int) {
+        if (mz != 0) {
+            val tile = world.tile(pos)
+            if (mz == 1 && tile == Tile.STAIRS_DOWN)
+                doAction("walk down the stairs")
+            else if (mz == -1 && tile == Tile.STAIRS_UP)
+                doAction("walk up the stairs")
+            else {
+                return
+            }
+        }
+
         val dest = Point(pos.x + mx, pos.y + my, pos.z + mz)
         val creature = world.creature(dest)
         if (creature == null) ai.onEnter(dest, world.tile(dest)) else attack(creature)

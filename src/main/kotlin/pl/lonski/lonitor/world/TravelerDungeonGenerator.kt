@@ -19,6 +19,7 @@ class TravelerDungeonGenerator(
     private var lastDirection = Point(0, 0, 0)
 
     override fun generate(): Array<Array<Tile>> {
+        tiles = Array(width) { Array(height) { Tile.WALL } }
         do {
             (0..iterationBatchSize).forEach { _ -> nextIteration() }
         } while (calcFillLevel() < fillLevel)

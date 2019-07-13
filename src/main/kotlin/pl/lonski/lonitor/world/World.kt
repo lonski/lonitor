@@ -3,16 +3,14 @@ package pl.lonski.lonitor.world
 import pl.lonski.lonitor.Point
 import pl.lonski.lonitor.creature.Creature
 import java.awt.Color
+import kotlin.random.Random
 
 class World(private var tiles: Array<Array<Array<Tile>>>) {
 
     val width = tiles[0].size
     val height = tiles[0][0].size
     val depth = tiles.size
-    private var currentLevel = 1
     private val creatures = ArrayList<Creature>()
-
-    fun currentLevel(): Int = currentLevel
 
     fun glyph(pos: Point): Char {
         return creature(pos)?.glyph() ?: tiles[pos.z][pos.x][pos.y].glyph
@@ -42,16 +40,16 @@ class World(private var tiles: Array<Array<Array<Tile>>>) {
         creatures.remove(creature)
     }
 
-    fun putAtEmptyLocation(creature: Creature) {
+    fun putAtEmptyLocation(creature: Creature, depth: Int) {
         creatures.add(creature)
-        creature.setPosition(getEmptyLocation())
+        creature.setPosition(getEmptyLocation(depth))
     }
 
-    private fun getEmptyLocation(): Point {
+    private fun getEmptyLocation(depth: Int): Point {
         var pos: Point
         do {
-            pos = Point((Math.random() * width).toInt(), (Math.random() * height).toInt(), currentLevel)
-        } while (!tile(pos).isGroud())
+            pos = Point(Random.nextInt(width), Random.nextInt(height), depth)
+        } while (!tile(pos).isGround())
 
         return pos
     }

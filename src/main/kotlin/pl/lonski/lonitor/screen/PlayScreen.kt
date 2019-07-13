@@ -30,7 +30,7 @@ class PlayScreen : GameScreen {
         val top = getScrollY()
         for (y in 0 until screenHeight) {
             for (x in 0 until screenWidth) {
-                val worldPos = Point(x + left, y + top, world.currentLevel())
+                val worldPos = Point(x + left, y + top, player.position().z)
                 terminal.write(world.glyph(worldPos), x, y, world.color(worldPos))
             }
         }
@@ -39,7 +39,7 @@ class PlayScreen : GameScreen {
     }
 
     private fun displayStats(terminal: AsciiPanel) {
-        val stats = "${player.hp()}/${player.maxHp()} hp"
+        val stats = "hp: ${player.hp()}/${player.maxHp()}, depth: ${player.position().z + 1}"
         terminal.write(stats, 0, screenHeight - 1)
     }
 
@@ -60,8 +60,10 @@ class PlayScreen : GameScreen {
             VK_U, VK_NUMPAD9 -> player.moveBy(1, -1, 0)
             VK_B, VK_NUMPAD1 -> player.moveBy(-1, 1, 0)
             VK_N, VK_NUMPAD3 -> player.moveBy(1, 1, 0)
-            else -> {
-            }
+        }
+        when (key.keyChar) {
+            '>' -> player.moveBy(0, 0, 1)
+            '<' -> player.moveBy(0, 0, -1)
         }
 
         return null
@@ -76,11 +78,9 @@ class PlayScreen : GameScreen {
     }
 
     private fun createWorld(): World {
-        return WorldBuilder(100, 50)
+        return WorldBuilder(80, 24)
             .usingTravellerGenerator()
-            .levels(1)
+            .levels(3)
             .build()
     }
 }
-
-
