@@ -6,6 +6,7 @@ import pl.lonski.lonitor.creature.Creature
 import pl.lonski.lonitor.world.CreatureFactory
 import pl.lonski.lonitor.world.World
 import pl.lonski.lonitor.world.WorldBuilder
+import java.awt.Color
 import java.awt.event.KeyEvent
 import java.awt.event.KeyEvent.*
 import kotlin.math.max
@@ -39,8 +40,9 @@ class PlayScreen : GameScreen {
     }
 
     private fun displayStats(terminal: AsciiPanel) {
-        val stats = "hp: ${player.hp()}/${player.maxHp()}, depth: ${player.position().z + 1}"
-        terminal.write(stats, 0, screenHeight - 1)
+        var stats = "hp: ${player.hp()}/${player.maxHp()}, depth: ${player.position().z + 1}"
+        stats += " ".repeat(screenWidth - stats.length)
+        terminal.write(stats, 0, screenHeight - 1, Color.LIGHT_GRAY, Color.DARK_GRAY)
     }
 
     private fun displayMessages(terminal: AsciiPanel) {
