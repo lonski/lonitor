@@ -26,30 +26,49 @@ class PlayScreen : GameScreen {
 
     init {
         spawnCreatures()
+        world.update()
     }
 
-    private fun spawnCreatures() {
-        for (depth in 0 until world.depth) {
-            repeat(Random.nextInt(5)) { creatureFactory.newFungus(depth) }
-            repeat(Random.nextInt(10)) { creatureFactory.newBat(depth) }
+    override fun handleInput(key: KeyEvent): GameScreen? {
+        when (key.keyCode) {
+            VK_H, VK_LEFT, VK_NUMPAD4 -> player.moveBy(-1, 0, 0)
+            VK_L, VK_RIGHT, VK_NUMPAD6 -> player.moveBy(1, 0, 0)
+            VK_K, VK_UP, VK_NUMPAD8 -> player.moveBy(0, -1, 0)
+            VK_J, VK_DOWN, VK_NUMPAD2 -> player.moveBy(0, 1, 0)
+            VK_Y, VK_NUMPAD7 -> player.moveBy(-1, -1, 0)
+            VK_U, VK_NUMPAD9 -> player.moveBy(1, -1, 0)
+            VK_B, VK_NUMPAD1 -> player.moveBy(-1, 1, 0)
+            VK_N, VK_NUMPAD3 -> player.moveBy(1, 1, 0)
+            VK_ESCAPE -> return LoseScreen()
         }
+        when (key.keyChar) {
+            '>' -> player.moveBy(0, 0, 1)
+            '<' -> player.moveBy(0, 0, -1)
+        }
+
+        world.update()
+
+        return if (player.hp() <= 0) LoseScreen() else null
     }
 
     override fun display(terminal: AsciiPanel) {
-        world.update()
+        displayTiles(terminal)
+        displayStats(terminal)
+        displayMessages(terminal)
+    }
+
+    private fun displayTiles(terminal: AsciiPanel) {
         val left = getScrollX()
         val top = getScrollY()
         for (y in 0 until screenHeight) {
             for (x in 0 until screenWidth) {
                 val worldPos = Point(x + left, y + top, player.position().z)
-                val inFov = player.canSee(worldPos)
-                val color = if (inFov) world.color(worldPos) else Color.DARK_GRAY
-                val glyph = if (inFov) world.glyph(worldPos) else fov.tile(worldPos).glyph
+                val isInFov = player.canSee(worldPos)
+                val color = if (isInFov) world.color(worldPos) else Color.DARK_GRAY
+                val glyph = if (isInFov) world.glyph(worldPos) else fov.tile(worldPos).glyph
                 terminal.write(glyph, x, y, color)
             }
         }
-        displayStats(terminal)
-        displayMessages(terminal)
     }
 
     private fun displayStats(terminal: AsciiPanel) {
@@ -65,25 +84,6 @@ class PlayScreen : GameScreen {
         messages.clear()
     }
 
-    override fun handleInput(key: KeyEvent): GameScreen? {
-        when (key.keyCode) {
-            VK_H, VK_LEFT, VK_NUMPAD4 -> player.moveBy(-1, 0, 0)
-            VK_L, VK_RIGHT, VK_NUMPAD6 -> player.moveBy(1, 0, 0)
-            VK_K, VK_UP, VK_NUMPAD8 -> player.moveBy(0, -1, 0)
-            VK_J, VK_DOWN, VK_NUMPAD2 -> player.moveBy(0, 1, 0)
-            VK_Y, VK_NUMPAD7 -> player.moveBy(-1, -1, 0)
-            VK_U, VK_NUMPAD9 -> player.moveBy(1, -1, 0)
-            VK_B, VK_NUMPAD1 -> player.moveBy(-1, 1, 0)
-            VK_N, VK_NUMPAD3 -> player.moveBy(1, 1, 0)
-        }
-        when (key.keyChar) {
-            '>' -> player.moveBy(0, 0, 1)
-            '<' -> player.moveBy(0, 0, -1)
-        }
-
-        return null
-    }
-
     private fun getScrollX(): Int {
         return max(0, min(player.position().x - screenWidth / 2, world.width - screenWidth))
     }
@@ -97,5 +97,12 @@ class PlayScreen : GameScreen {
             .usingTravellerGenerator()
             .levels(3)
             .build()
+    }
+
+    private fun spawnCreatures() {
+        for (depth in 0 until world.depth) {
+            repeat(Random.nextInt(5)) { creatureFactory.newFungus(depth) }
+            repeat(Random.nextInt(10)) { creatureFactory.newBat(depth) }
+        }
     }
 }
