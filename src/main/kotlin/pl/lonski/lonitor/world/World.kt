@@ -2,6 +2,7 @@ package pl.lonski.lonitor.world
 
 import pl.lonski.lonitor.Point
 import pl.lonski.lonitor.creature.Creature
+import pl.lonski.lonitor.item.Item
 import java.awt.Color
 import kotlin.random.Random
 
@@ -11,13 +12,14 @@ class World(private var tiles: Array<Array<Array<Tile>>>) {
     val height = tiles[0][0].size
     val depth = tiles.size
     private val creatures = ArrayList<Creature>()
+    private val items: Array<Array<Array<Item?>>> = Array(depth) { Array(width) { arrayOfNulls<Item>(height) } }
 
     fun glyph(pos: Point): Char {
-        return creature(pos)?.glyph() ?: tiles[pos.z][pos.x][pos.y].glyph
+        return creature(pos)?.glyph() ?: item(pos)?.glyph() ?: tiles[pos.z][pos.x][pos.y].glyph
     }
 
     fun color(pos: Point): Color {
-        return creature(pos)?.color() ?: tiles[pos.z][pos.x][pos.y].color
+        return creature(pos)?.color() ?: item(pos)?.color() ?: tiles[pos.z][pos.x][pos.y].color
     }
 
     fun tile(pos: Point): Tile {
@@ -31,6 +33,10 @@ class World(private var tiles: Array<Array<Array<Tile>>>) {
         return creatures.find { it.position() == pos }
     }
 
+    fun item(pos: Point): Item? {
+        return items[pos.z][pos.x][pos.y]
+    }
+
     fun update() {
         val toUpdate = ArrayList(creatures)
         toUpdate.forEach { it.update() }
@@ -41,19 +47,23 @@ class World(private var tiles: Array<Array<Array<Tile>>>) {
     }
 
     fun putAtEmptyLocation(creature: Creature, depth: Int) {
+        var p: Point
+        do {
+            p = Point(Random.nextInt(width), Random.nextInt(height), depth)
+        } while (!tile(p).isGround())
+
         creatures.add(creature)
-        creature.setPosition(getEmptyLocation(depth))
+        creature.setPosition(p)
+    }
+
+    fun putAtEmptyLocation(item: Item, depth: Int) {
+        var p: Point
+        do {
+            p = Point(Random.nextInt(width), Random.nextInt(height), depth)
+        } while (!tile(p).isGround() || item(p) != null)
+        items[p.z][p.x][p.y] = item
     }
 
     fun isInBounds(pos: Point): Boolean =
         pos.x in 0 until width && pos.y in 0 until height && pos.z in 0 until depth
-
-    private fun getEmptyLocation(depth: Int): Point {
-        var pos: Point
-        do {
-            pos = Point(Random.nextInt(width), Random.nextInt(height), depth)
-        } while (!tile(pos).isGround())
-
-        return pos
-    }
 }

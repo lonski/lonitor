@@ -3,7 +3,8 @@ package pl.lonski.lonitor.screen
 import asciiPanel.AsciiPanel
 import pl.lonski.lonitor.Point
 import pl.lonski.lonitor.creature.Creature
-import pl.lonski.lonitor.world.CreatureFactory
+import pl.lonski.lonitor.creature.CreatureFactory
+import pl.lonski.lonitor.item.ItemFactory
 import pl.lonski.lonitor.world.Fov
 import pl.lonski.lonitor.world.World
 import pl.lonski.lonitor.world.WorldBuilder
@@ -22,10 +23,12 @@ class PlayScreen : GameScreen {
     private val fov = Fov(world)
     private val messages: MutableList<String> = ArrayList()
     private val creatureFactory = CreatureFactory(world)
+    private val itemFactory = ItemFactory(world)
     private val player: Creature = creatureFactory.newPlayer(messages, fov)
 
     init {
         spawnCreatures()
+        spawnItems()
         world.update()
     }
 
@@ -103,6 +106,12 @@ class PlayScreen : GameScreen {
         for (depth in 0 until world.depth) {
             repeat(Random.nextInt(5)) { creatureFactory.newFungus(depth) }
             repeat(Random.nextInt(10)) { creatureFactory.newBat(depth) }
+        }
+    }
+
+    private fun spawnItems() {
+        for (depth in 0 until world.depth) {
+            repeat(Random.nextInt(50)) { itemFactory.newRock(depth) }
         }
     }
 }

@@ -1,9 +1,7 @@
-package pl.lonski.lonitor.world
+package pl.lonski.lonitor.creature
 
-import pl.lonski.lonitor.creature.BatAi
-import pl.lonski.lonitor.creature.Creature
-import pl.lonski.lonitor.creature.FungusAi
-import pl.lonski.lonitor.creature.PlayerAi
+import pl.lonski.lonitor.world.Fov
+import pl.lonski.lonitor.world.World
 import java.awt.Color
 
 
@@ -20,7 +18,7 @@ class CreatureFactory(private val world: World) {
 
     fun newFungus(depth: Int): Creature {
         val creature = Creature(
-            'f', Color.ORANGE, world, "fungus", 10, 0, 0
+            ',', Color.ORANGE, world, "fungus", 10, 0, 0
         )
         creature.setAi(FungusAi(creature, this))
         world.putAtEmptyLocation(creature, depth)

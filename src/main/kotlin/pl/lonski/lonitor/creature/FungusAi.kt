@@ -1,7 +1,6 @@
 package pl.lonski.lonitor.creature
 
 import pl.lonski.lonitor.Point
-import pl.lonski.lonitor.world.CreatureFactory
 import kotlin.random.Random
 
 class FungusAi(creature: Creature, private val creatureFactory: CreatureFactory) : CreatureAi(creature) {
